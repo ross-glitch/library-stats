@@ -23,7 +23,7 @@ type EditForm = {
 };
 
 // Recharts colors
-const COLORS = ['#10b981', '#a855f7', '#3b82f6', '#f97316', '#ef4444']; 
+const COLORS = ['#10b981', '#a855f7', '#3b82f6', '#f97316', '#ef4444'];
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -91,7 +91,7 @@ export default function DashboardPage() {
 
     let topCat = 'None';
     if (pieData.length > 0) {
-      const sorted = [...pieData].sort((a,b) => b.value - a.value);
+      const sorted = [...pieData].sort((a, b) => b.value - a.value);
       topCat = sorted[0].name;
     }
 
@@ -171,7 +171,7 @@ export default function DashboardPage() {
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 py-8 lg:py-12">
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-          
+
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
               <h1 className="text-3xl lg:text-4xl font-extrabold text-white tracking-tight">Dashboard Overview</h1>
@@ -190,12 +190,12 @@ export default function DashboardPage() {
           {/* Quick Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {[
-              { label: 'Books Today', value: stats.booksToday, icon: '📚' },
-              { label: 'Current Month', value: stats.booksMonth, icon: '📅' },
-              { label: 'Top Category', value: stats.topCategory, icon: '🥇' },
-              { label: 'Total Logs', value: stats.totalEntries, icon: '📝' },
+              { label: 'Books Today', value: stats.booksToday },
+              { label: 'Current Month', value: stats.booksMonth },
+              { label: 'Top Category', value: stats.topCategory },
+              { label: 'Total Logs', value: stats.totalEntries },
             ].map((stat, i) => (
-              <motion.div 
+              <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
                 className="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-xl backdrop-blur-md hover:border-white/20 transition-all hover:-translate-y-1 group"
@@ -222,7 +222,7 @@ export default function DashboardPage() {
                       <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.gridColor} vertical={false} />
                       <XAxis dataKey="monthLabel" stroke={chartTheme.textColor} fontSize={12} tickLine={false} axisLine={false} />
                       <YAxis stroke={chartTheme.textColor} fontSize={12} tickLine={false} axisLine={false} />
-                      <RechartsTooltip 
+                      <RechartsTooltip
                         contentStyle={{ backgroundColor: chartTheme.tooltipBg, border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }}
                         itemStyle={{ color: '#fff' }}
                         cursor={{ fill: 'rgba(255,255,255,0.05)' }}
@@ -235,10 +235,10 @@ export default function DashboardPage() {
                 )}
               </div>
             </motion.div>
-            
+
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-xl backdrop-blur-md hover:border-white/20 transition-colors">
               <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-3 uppercase tracking-widest text-sm">
-                 <span className="w-4 h-4 rounded-full bg-blue-500"></span> Category Distribution
+                <span className="w-4 h-4 rounded-full bg-blue-500"></span> Category Distribution
               </h3>
               <div className="h-72">
                 {stats.pieData.length > 0 ? (
@@ -249,7 +249,7 @@ export default function DashboardPage() {
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>
-                      <RechartsTooltip contentStyle={{ backgroundColor: chartTheme.tooltipBg, borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }} itemStyle={{ color: '#fff' }}/>
+                      <RechartsTooltip contentStyle={{ backgroundColor: chartTheme.tooltipBg, borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }} itemStyle={{ color: '#fff' }} />
                       <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px', color: '#fff', paddingTop: '20px' }} />
                     </PieChart>
                   </ResponsiveContainer>
@@ -277,7 +277,7 @@ export default function DashboardPage() {
                 Daily Logs
               </button>
             </div>
-            
+
             <div className="p-6 overflow-x-auto min-h-[300px]">
               {loading ? (
                 <div className="text-center py-20 text-cpuGold font-bold animate-pulse">Syncing Library Data...</div>
@@ -294,11 +294,11 @@ export default function DashboardPage() {
       {/* Edit Modal */}
       <AnimatePresence>
         {editEntry && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-cpuNavy/90 backdrop-blur-sm p-4"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
               className="bg-cpuNavy border border-white/10 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden"
             >
@@ -326,7 +326,7 @@ export default function DashboardPage() {
                         {assistants.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                       </select>
                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-cpuGold">
-                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                       </div>
                     </div>
                   </div>
