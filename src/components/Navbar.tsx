@@ -22,8 +22,8 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-cpuNavy text-white shadow-lg border-b-4 border-cpuGold">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <nav className="bg-cpuNavy text-white sticky top-0 z-50 border-b border-gray-800 shadow-sm">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2 font-extrabold text-xl hover:text-cpuGold transition-colors">
           <span className="hidden sm:inline tracking-wide">HENRY LUCE III LIBRARY</span>
@@ -43,10 +43,10 @@ export default function Navbar() {
             </span>
           )}
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={handleLogout}
-            className="bg-cpuGold hover:bg-cpuGoldDark text-cpuNavy text-sm font-bold py-1.5 px-4 rounded-lg transition-colors"
+            className="bg-cpuGold hover:bg-cpuGoldDark text-cpuNavy text-sm font-medium py-2 px-5 rounded-md transition-colors"
           >
             Logout
           </motion.button>
@@ -60,10 +60,10 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
   return (
     <Link
       href={href}
-      className={`text-sm font-bold py-1.5 px-3 rounded-lg transition-colors relative
+      className={`text-sm font-medium py-2 px-4 rounded-md transition-all relative
         ${active
-          ? 'text-cpuGold'
-          : 'text-gray-300 hover:text-white hover:bg-white/10'
+          ? 'text-cpuGold bg-white/5'
+          : 'text-gray-300 hover:text-white hover:bg-white/5'
         }`}
     >
       {label}

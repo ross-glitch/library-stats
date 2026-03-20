@@ -106,8 +106,8 @@ export default function AddEntryPage() {
         className="max-w-lg mx-auto px-4 py-8"
       >
         <div className="mb-6">
-          <h1 className="text-3xl font-extrabold text-cpuNavy">Add Daily Entry</h1>
-          <p className="text-cpuGoldDark font-semibold mt-1">Record today's book usage</p>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Add Daily Entry</h1>
+          <p className="text-gray-500 font-medium mt-1">Record today's book usage</p>
         </div>
 
         {status && (
@@ -138,12 +138,12 @@ export default function AddEntryPage() {
             </select>
           </div>
 
-          <div className="border-t-2 border-dashed border-gray-200 pt-2">
-            <p className="text-xs font-bold text-cpuGold uppercase tracking-wide mb-4">Number of books per category</p>
+          <div className="border-t border-gray-100 pt-6 mt-2">
+            <p className="text-xs font-bold text-cpuNavy uppercase tracking-wider mb-5">Number of books per category</p>
             <div className="grid grid-cols-1 gap-4">
               {categoryFields.map((field) => (
                 <div key={field.key} className="flex items-center gap-3">
-                  <span className="text-2xl w-8 text-center flex-shrink-0">{field.emoji}</span>
+                  <div className="w-2 h-2 rounded-full bg-cpuGold flex-shrink-0 mr-3"></div>
                   <div className="flex-1">
                     <label className="label" htmlFor={field.key}>{field.label}</label>
                     <input
@@ -163,7 +163,7 @@ export default function AddEntryPage() {
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-4 border-2 border-gray-200">
+          <div className="bg-blue-50/50 rounded-xl p-5 border border-blue-100">
             <div className="flex justify-between items-center">
               <span className="font-bold text-cpuNavy">Total Books:</span>
               <span className="text-2xl font-extrabold text-cpuNavy">

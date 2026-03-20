@@ -152,7 +152,7 @@ export default function DashboardPage() {
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8"
         >
           <div>
-            <h1 className="text-3xl font-extrabold text-cpuNavy">Dashboard</h1>
+            <h1 className="text-3xl font-semibold text-gray-500 text-xs tracking-wider uppercase">Dashboard</h1>
             <p className="text-cpuGoldDark font-semibold mt-1">Book usage statistics overview</p>
           </div>
           <div className="flex gap-2">
@@ -200,8 +200,8 @@ export default function DashboardPage() {
         <div className="flex gap-2 mb-4">
           {(['monthly', 'daily'] as const).map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`py-2 px-5 rounded-xl font-bold text-sm transition-all
-                ${activeTab === tab ? 'bg-cpuNavy text-white shadow' : 'bg-white text-cpuNavy border-2 border-gray-200 hover:border-cpuGold'}`}>
+              className={`py-2 px-5 rounded-lg text-sm transition-all
+                ${activeTab === tab ? 'bg-cpuNavy text-white shadow' : 'bg-white text-gray-600 border border-transparent hover:text-cpuNavy font-medium opacity-80 hover:opacity-100'}`}>
               {tab === 'monthly' ? 'Monthly Totals' : 'Daily Entries'}
             </button>
           ))}
@@ -229,7 +229,7 @@ export default function DashboardPage() {
       {editEntry && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-            <h2 className="text-xl font-extrabold text-cpuNavy mb-1">Edit Entry</h2>
+            <h2 className="text-xl font-semibold text-gray-500 text-xs tracking-wider uppercase mb-1">Edit Entry</h2>
             <p className="text-cpuGoldDark text-sm font-semibold mb-4">{formatDate(editEntry.date)}</p>
 
             {editStatus && (
@@ -287,11 +287,11 @@ export default function DashboardPage() {
 function MonthlyTable({ totals }: { totals: MonthlyTotal[] }) {
   if (totals.length === 0) return <EmptyState message="No monthly data yet." />;
   return (
-    <div className="card overflow-x-auto">
-      <h2 className="text-xl font-extrabold text-cpuNavy mb-4">Monthly Book Totals</h2>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto p-1">
+      <h2 className="text-lg font-bold text-gray-900 mb-2 px-4 pt-4">Monthly Book Totals</h2>
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b-2 border-gray-200">
+          <tr className="border-b-2 border-gray-100 bg-gray-50/50">
             <Th>Month</Th>
             <Th>Easy</Th>
             <Th>Fiction</Th>
@@ -304,15 +304,15 @@ function MonthlyTable({ totals }: { totals: MonthlyTotal[] }) {
         </thead>
         <tbody>
           {totals.map((row, i) => (
-            <tr key={row.month} className={`border-b border-gray-100 ${i % 2 === 0 ? '' : 'bg-gray-100/50'}`}>
-              <td className="py-3 px-3 font-bold text-cpuNavy">{row.monthLabel}</td>
-              <td className="py-3 px-3 text-center font-semibold text-gray-700">{row.easy}</td>
-              <td className="py-3 px-3 text-center font-semibold text-gray-700">{row.fiction}</td>
-              <td className="py-3 px-3 text-center font-semibold text-gray-700">{row.newBooks}</td>
-              <td className="py-3 px-3 text-center font-semibold text-gray-700">{row.reference}</td>
-              <td className="py-3 px-3 text-center font-semibold text-gray-700">{row.filipiniana}</td>
-              <td className="py-3 px-3 text-center font-semibold text-gray-700">{row.circulation}</td>
-              <td className="py-3 px-3 text-center font-extrabold text-cpuNavy">{row.totalBooks}</td>
+            <tr key={row.month} className="border-b border-gray-50 hover:bg-blue-50/50 transition-colors">
+              <td className="py-4 px-4 font-medium text-gray-900">{row.monthLabel}</td>
+              <Num>{row.easy}</Num>
+              <Num>{row.fiction}</Num>
+              <Num>{row.newBooks}</Num>
+              <Num>{row.reference}</Num>
+              <Num>{row.filipiniana}</Num>
+              <Num>{row.circulation}</Num>
+              <td className="py-4 px-4 text-center font-semibold text-cpuNavy">{row.totalBooks}</td>
             </tr>
           ))}
         </tbody>
@@ -324,11 +324,11 @@ function MonthlyTable({ totals }: { totals: MonthlyTotal[] }) {
 function DailyTable({ stats, onEdit }: { stats: DailyStat[]; onEdit: (row: DailyStat) => void }) {
   if (stats.length === 0) return <EmptyState message="No daily entries yet." />;
   return (
-    <div className="card overflow-x-auto">
-      <h2 className="text-xl font-extrabold text-cpuNavy mb-4">Daily Entries</h2>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto p-1">
+      <h2 className="text-lg font-bold text-gray-900 mb-2 px-4 pt-4">Daily Entries</h2>
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b-2 border-gray-200">
+          <tr className="border-b-2 border-gray-100 bg-gray-50/50">
             <Th>Date</Th>
             <Th>Assistant</Th>
             <Th>Easy</Th>
@@ -345,19 +345,19 @@ function DailyTable({ stats, onEdit }: { stats: DailyStat[]; onEdit: (row: Daily
           {stats.map((row, i) => {
             const total = row.easy + row.fiction + row.newBooks + row.reference + row.filipiniana + row.circulation;
             return (
-              <tr key={row.id} className={`border-b border-gray-100 ${i % 2 === 0 ? '' : 'bg-gray-100/50'}`}>
-                <td className="py-3 px-3 font-semibold text-gray-700 whitespace-nowrap">{formatDate(row.date)}</td>
-                <td className="py-3 px-3 text-gray-700 whitespace-nowrap">{row.assistant.name}</td>
+              <tr key={row.id} className="border-b border-gray-50 hover:bg-blue-50/50 transition-colors">
+                <td className="py-4 px-4 font-medium text-gray-900 whitespace-nowrap">{formatDate(row.date)}</td>
+                <td className="py-4 px-4 text-gray-600 font-medium whitespace-nowrap">{row.assistant.name}</td>
                 <Num>{row.easy}</Num>
                 <Num>{row.fiction}</Num>
                 <Num>{row.newBooks}</Num>
                 <Num>{row.reference}</Num>
                 <Num>{row.filipiniana}</Num>
                 <Num>{row.circulation}</Num>
-                <td className="py-3 px-3 text-center font-extrabold text-cpuNavy">{total}</td>
-                <td className="py-3 px-3 text-center">
+                <td className="py-4 px-4 text-center font-semibold text-cpuNavy">{total}</td>
+                <td className="py-4 px-4 text-center">
                   <button onClick={() => onEdit(row)}
-                    className="bg-gray-100 hover:bg-gray-200 text-cpuNavy font-bold text-xs py-1.5 px-3 rounded-lg transition-colors">
+                    className="bg-white hover:bg-gray-50 text-gray-600 border border-gray-200 font-medium text-xs py-2 px-4 rounded-md transition-colors">
                     Edit
                   </button>
                 </td>
@@ -371,16 +371,16 @@ function DailyTable({ stats, onEdit }: { stats: DailyStat[]; onEdit: (row: Daily
 }
 
 function Th({ children }: { children: React.ReactNode }) {
-  return <th className="py-3 px-3 text-left font-extrabold text-cpuNavy whitespace-nowrap">{children}</th>;
+  return <th className="py-3 px-4 text-left font-semibold text-gray-500 text-xs tracking-wider uppercase whitespace-nowrap">{children}</th>;
 }
 function Num({ children }: { children: React.ReactNode }) {
-  return <td className="py-3 px-3 text-center font-semibold text-gray-700">{children}</td>;
+  return <td className="py-4 px-4 text-center text-gray-600 font-medium">{children}</td>;
 }
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="card text-center py-16">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center py-16">
       <div className="text-5xl mb-4"></div>
-      <p className="text-cpuGoldDark font-bold text-lg">{message}</p>
+      <p className="text-gray-500 font-medium text-lg">{message}</p>
     </div>
   );
 }

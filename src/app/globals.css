@@ -10,18 +10,18 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-cpuNavy hover:bg-cpuNavy/90 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95;
+    @apply bg-cpuNavy hover:bg-cpuNavy/90 text-white font-medium py-2.5 px-4 rounded-lg transition-all shadow-sm active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
   }
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-cpuNavy font-bold py-3 px-6 rounded-xl border-2 border-cpuNavy transition-all duration-200 active:scale-95;
+    @apply bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 rounded-lg border border-gray-200 transition-all shadow-sm active:scale-[0.98];
   }
   .card {
-    @apply bg-white rounded-2xl shadow-sm border border-gray-200 p-6;
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
   }
   .input-field {
-    @apply w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:border-cpuNavy focus:ring-2 focus:ring-cpuNavy/20 transition-all text-lg;
+    @apply w-full bg-white border border-gray-200 rounded-lg px-3.5 py-2 text-gray-900 text-sm focus:outline-none focus:border-cpuNavy focus:ring-1 focus:ring-cpuNavy transition-all;
   }
   .label {
-    @apply block text-sm font-bold text-cpuNavy mb-1;
+    @apply block text-sm font-medium text-gray-700 mb-1.5;
   }
 }
