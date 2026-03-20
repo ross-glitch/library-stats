@@ -1,187 +1,204 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
-import { Assistant, CATEGORIES } from '@/types';
-import { getTodayLocal, isWeekday } from '@/lib/utils';
+import { Assistant } from '@/types';
 import { motion } from 'framer-motion';
-
-type FormState = {
-  date: string;
-  assistantId: string;
-  newBooks: string;
-  fiction: string;
-  easy: string;
-  reference: string;
-  filipiniana: string;
-  circulation: string;
-};
-
-type Status = { type: 'success' | 'error'; message: string } | null;
 
 export default function AddEntryPage() {
   const router = useRouter();
   const [assistants, setAssistants] = useState<Assistant[]>([]);
-  const [submitting, setSubmitting] = useState(false);
-  const [status, setStatus] = useState<Status>(null);
+  const [loading, setLoading] = useState(true);
 
-  const [form, setForm] = useState<FormState>({
-    date: getTodayLocal(),
-    assistantId: '',
-    newBooks: '',
-    fiction: '',
-    easy: '',
-    reference: '',
-    filipiniana: '',
-    circulation: '',
-  });
+  // Form state
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [assistantId, setAssistantId] = useState('');
+  const [newBooks, setNewBooks] = useState('');
+  const [fiction, setFiction] = useState('');
+  const [easy, setEasy] = useState('');
+  const [reference, setReference] = useState('');
+  const [filipiniana, setFilipiniana] = useState('');
+  const [circulation, setCirculation] = useState('');
+
+  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const stored = sessionStorage.getItem('assistant');
     if (!stored) { router.push('/login'); return; }
-    const parsed: Assistant = JSON.parse(stored);
-    setForm((f) => ({ ...f, assistantId: String(parsed.id) }));
-    fetch('/api/assistants').then((r) => r.json()).then((data) => setAssistants(data.data || []));
-  }, [router]);
+    
+    // Auto-select logged-in assistant if available
+    try {
+      const p = JSON.parse(stored);
+      if (p && p.id) setAssistantId(String(p.id));
+    } catch {}
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
-    setStatus(null);
-  }
+    fetch('/api/assistants')
+      .then(res => res.json())
+      .then(data => {
+        setAssistants(data.data || []);
+        setLoading(false);
+      });
+  }, [router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setSaving(true);
     setStatus(null);
-
-    if (!isWeekday(form.date)) {
-      const ok = confirm(`${form.date} is a weekend day.\n\nDo you still want to submit?`);
-      if (!ok) return;
-    }
-
-    setSubmitting(true);
     try {
       const res = await fetch('/api/stats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          date: form.date,
-          assistantId: form.assistantId,
-          newBooks:    form.newBooks    || '0',
-          fiction:     form.fiction     || '0',
-          easy:        form.easy        || '0',
-          reference:   form.reference   || '0',
-          filipiniana: form.filipiniana || '0',
-          circulation: form.circulation || '0',
+          assistantId,
+          date,
+          newBooks, fiction, easy, reference, filipiniana, circulation
         }),
       });
       const data = await res.json();
       if (!res.ok) {
-        setStatus({ type: 'error', message: data.error || 'Something went wrong.' });
+        setStatus({ type: 'error', message: data.error || 'Failed to save entry.' });
       } else {
-        setStatus({ type: 'success', message: `${data.message}` });
-        setForm((f) => ({ ...f, newBooks: '', fiction: '', easy: '', reference: '', filipiniana: '', circulation: '' }));
+        setStatus({ type: 'success', message: 'Entry saved successfully!' });
+        // Reset counts but keep date and assistant
+        setNewBooks(''); setFiction(''); setEasy('');
+        setReference(''); setFilipiniana(''); setCirculation('');
+        // Dismiss success message after a bit
+        setTimeout(() => setStatus(null), 3000);
       }
     } catch {
-      setStatus({ type: 'error', message: 'Network error. Please try again.' });
+      setStatus({ type: 'error', message: 'Network error.' });
     } finally {
-      setSubmitting(false);
+      setSaving(false);
     }
   }
 
-  const categoryFields = [
-    { key: 'easy',        label: 'Easy',        emoji: '' },
-    { key: 'fiction',     label: 'Fiction',     emoji: '' },
-    { key: 'newBooks',    label: 'New Books',   emoji: '' },
-    { key: 'reference',   label: 'Reference',   emoji: '' },
-    { key: 'filipiniana', label: 'Filipiniana', emoji: '' },
-    { key: 'circulation', label: 'Circulation', emoji: '' },
-  ];
+  // Common input styling class for reuse
+  const inputBaseClass = "w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cpuGold focus:ring-2 focus:ring-cpuGold/50 transition-all font-medium hover:bg-white/15 focus:-translate-y-[1px]";
 
   return (
-    <div className="min-h-screen bg-white/5">
+    <div className="min-h-screen bg-cpuNavy text-white">
       <Navbar />
-      <motion.main 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-lg mx-auto px-4 py-8"
-      >
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white tracking-tight">Add Daily Entry</h1>
-          <p className="text-gray-400 font-medium mt-1">Record today's book usage</p>
-        </div>
+      
+      <main className="max-w-4xl mx-auto px-4 py-10 lg:py-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+        >
+          <div className="mb-10 text-center lg:text-left">
+            <h1 className="text-4xl font-extrabold text-white tracking-tight mb-2">Log New Entry</h1>
+            <p className="text-gray-400 text-lg">Record daily book statistics, additions, and circulation numbers.</p>
+          </div>
 
-        {status && (
-          <div className={`mb-6 p-4 rounded-xl font-bold text-sm
-            ${status.type === 'success' ? 'bg-green-100 text-green-800 border-2 border-green-300' : 'bg-red-100 text-red-800 border-2 border-red-300'}`}>
-            {status.message}
-            {status.type === 'success' && (
-              <button onClick={() => router.push('/dashboard')} className="ml-4 underline font-extrabold">
-                View Dashboard →
-              </button>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            
+            {status && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                className={`p-5 rounded-2xl text-sm font-bold border shadow-lg backdrop-blur-md
+                  ${status.type === 'success' ? 'bg-green-500/10 text-green-400 border-green-500/30' : 'bg-red-500/10 text-red-400 border-red-500/30'}`}
+              >
+                {status.message}
+              </motion.div>
             )}
-          </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="card space-y-5">
-          <div>
-            <label className="label" htmlFor="date">Date</label>
-            <input id="date" name="date" type="date" value={form.date} onChange={handleChange} required className="input-field" />
-          </div>
-
-          <div>
-            <label className="label" htmlFor="assistantId">Your Name</label>
-            <select id="assistantId" name="assistantId" value={form.assistantId} onChange={handleChange} required className="input-field bg-white/5">
-              <option value="">— Select your name —</option>
-              {assistants.map((a) => (
-                <option key={a.id} value={a.id}>{a.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="border-t border-white/10 pt-6 mt-2">
-            <p className="text-xs font-bold text-white uppercase tracking-wider mb-5">Number of books per category</p>
-            <div className="grid grid-cols-1 gap-4">
-              {categoryFields.map((field) => (
-                <div key={field.key} className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-cpuGold flex-shrink-0 mr-3"></div>
-                  <div className="flex-1">
-                    <label className="label" htmlFor={field.key}>{field.label}</label>
-                    <input
-                      id={field.key}
-                      name={field.key}
-                      type="number"
-                      min="0"
-                      max="9999"
-                      value={form[field.key as keyof FormState]}
-                      onChange={handleChange}
-                      placeholder="0"
-                      className="input-field"
-                    />
+            {/* Section 1: Metadata */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:border-white/20">
+              <h2 className="text-xl font-bold text-cpuGold mb-6 flex items-center gap-3 uppercase tracking-widest text-sm">
+                <span className="w-8 h-[2px] bg-cpuGold rounded-full"></span>
+                Record Details
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2 tracking-wide uppercase">Date</label>
+                  <input
+                    type="date"
+                    required
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className={inputBaseClass}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2 tracking-wide uppercase">Assistant</label>
+                  <div className="relative">
+                    <select
+                      required
+                      value={assistantId}
+                      onChange={(e) => setAssistantId(e.target.value)}
+                      className={`${inputBaseClass} appearance-none cursor-pointer`}
+                    >
+                      <option value="" disabled className="text-gray-900">Select Assistant...</option>
+                      {assistants.map(a => (
+                        <option key={a.id} value={a.id} className="text-gray-900">{a.name}</option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-cpuGold">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    </div>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
 
-          <div className="bg-white/5/5 rounded-xl p-5 border border-blue-100">
-            <div className="flex justify-between items-center">
-              <span className="font-bold text-white">Total Books:</span>
-              <span className="text-2xl font-extrabold text-white">
-                {[form.newBooks, form.fiction, form.easy, form.reference, form.filipiniana, form.circulation]
-                  .reduce((sum, v) => sum + (parseInt(v) || 0), 0).toLocaleString()}
-              </span>
+            {/* Section 2: Category Counts */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:border-white/20">
+              <h2 className="text-xl font-bold text-cpuGold mb-6 flex items-center gap-3 uppercase tracking-widest text-sm">
+                <span className="w-8 h-[2px] bg-cpuGold rounded-full"></span>
+                Book Categories
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-green-300 mb-2 tracking-wide">EASY</label>
+                  <input type="number" min="0" value={easy} onChange={(e) => setEasy(e.target.value)} className={inputBaseClass} placeholder="0" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-purple-300 mb-2 tracking-wide">FICTION</label>
+                  <input type="number" min="0" value={fiction} onChange={(e) => setFiction(e.target.value)} className={inputBaseClass} placeholder="0" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-orange-300 mb-2 tracking-wide">REFERENCE</label>
+                  <input type="number" min="0" value={reference} onChange={(e) => setReference(e.target.value)} className={inputBaseClass} placeholder="0" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-red-300 mb-2 tracking-wide">FILIPINIANA</label>
+                  <input type="number" min="0" value={filipiniana} onChange={(e) => setFilipiniana(e.target.value)} className={inputBaseClass} placeholder="0" />
+                </div>
+              </div>
             </div>
-          </div>
 
-          <button type="submit" disabled={submitting} className="btn-primary w-full text-lg disabled:opacity-50">
-            {submitting ? 'Saving...' : 'Save Entry'}
-          </button>
-        </form>
+            {/* Section 3: Incoming & Usage */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:border-white/20">
+              <h2 className="text-xl font-bold text-cpuGold mb-6 flex items-center gap-3 uppercase tracking-widest text-sm">
+                <span className="w-8 h-[2px] bg-cpuGold rounded-full"></span>
+                Circulation & Incoming
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-blue-300 mb-2 tracking-wide">NEW BOOKS</label>
+                  <input type="number" min="0" value={newBooks} onChange={(e) => setNewBooks(e.target.value)} className={inputBaseClass} placeholder="0" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-yellow-300 mb-2 tracking-wide">GENERAL CIRCULATION</label>
+                  <input type="number" min="0" value={circulation} onChange={(e) => setCirculation(e.target.value)} className={inputBaseClass} placeholder="0" />
+                </div>
+              </div>
+            </div>
 
-        <button onClick={() => router.push('/dashboard')} className="btn-secondary w-full mt-4 text-center block">
-          ← Back to Dashboard
-        </button>
-      </motion.main>
+            <div className="pt-4 pb-20 text-right">
+              <button
+                type="submit"
+                disabled={saving || loading || !assistantId || !date}
+                className="w-full md:w-auto md:px-16 bg-cpuGold hover:bg-yellow-400 text-cpuNavy disabled:opacity-40 text-lg py-4 rounded-xl uppercase tracking-widest font-black transition-all shadow-lg hover:shadow-cpuGold/20 hover:-translate-y-1 active:scale-95 active:translate-y-0"
+              >
+                {saving ? 'Submitting Data...' : 'Submit Entry'}
+              </button>
+            </div>
+            
+          </form>
+        </motion.div>
+      </main>
     </div>
   );
 }

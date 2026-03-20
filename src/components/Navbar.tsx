@@ -26,13 +26,13 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2 font-extrabold text-xl hover:text-cpuGold transition-colors">
-          <span className="hidden sm:inline tracking-wide">HENRY LUCE III LIBRARY</span>
+          <span className="hidden sm:inline tracking-wide">ELEMENTARY LIBRARY</span>
         </Link>
 
         {/* Nav Links */}
         <div className="flex items-center gap-2">
-          <NavLink href="/dashboard"   label="Dashboard"  active={pathname === '/dashboard'} />
-          <NavLink href="/add-entry"   label="Add Entry"  active={pathname === '/add-entry'} />
+          <NavLink href="/dashboard" label="Dashboard" active={pathname === '/dashboard'} />
+          <NavLink href="/add-entry" label="Add Entry" active={pathname === '/add-entry'} />
         </div>
 
         {/* User + Logout */}
@@ -43,10 +43,10 @@ export default function Navbar() {
             </span>
           )}
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleLogout}
-            className="bg-cpuGold hover:bg-cpuGoldDark text-white text-sm font-medium py-2 px-5 rounded-md transition-colors"
+            className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white text-sm font-bold py-2 px-5 rounded-lg transition-colors border border-red-500/20 ml-4"
           >
             Logout
           </motion.button>
@@ -60,10 +60,10 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
   return (
     <Link
       href={href}
-      className={`text-sm font-medium py-2 px-4 rounded-md transition-all relative
+      className={`text-sm font-bold py-2 px-4 rounded-lg transition-all relative
         ${active
-          ? 'text-cpuGold bg-white/5/5'
-          : 'text-gray-300 hover:text-white hover:bg-white/5/5'
+          ? 'text-cpuGold bg-white/10'
+          : 'text-gray-400 hover:text-white hover:bg-white/5'
         }`}
     >
       {label}
