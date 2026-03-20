@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Assistant {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  createdAt  DateTime    @default(now())
+  dailyStats DailyStat[]
+}
+
+model DailyStat {
+  id          Int       @id @default(autoincrement())
+  date        DateTime  @db.Date
+  assistantId Int
+  newBooks    Int       @default(0)
+  fiction     Int       @default(0)
+  easy        Int       @default(0)
+  reference   Int       @default(0)
+  filipiniana Int       @default(0)
+  circulation Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  assistant Assistant @relation(fields: [assistantId], references: [id])
+
+  @@index([date])
+}
