@@ -3,19 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@600;700;800&display=swap');
-
 :root {
-  --color-primary: #b45309;
-  --color-primary-light: #fef3c7;
-}
-
-html {
-  font-family: 'Nunito', sans-serif;
-}
-
-h1, h2, h3 {
-  font-family: 'Baloo 2', cursive;
+  --color-primary: #0F1E3A;
+  --color-primary-light: #F3B229;
 }
 
 @layer components {

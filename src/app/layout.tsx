@@ -1,6 +1,9 @@
 // src/app/layout.tsx
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Library Stats — Elementary School',
@@ -10,7 +13,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-amber-50 font-sans antialiased">
+      <body className={`min-h-screen ${inter.className} bg-gray-50 antialiased`}>
         {children}
       </body>
     </html>

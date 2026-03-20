@@ -10,8 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Nunito', 'ui-sans-serif', 'system-ui'],
-        display: ['Baloo 2', 'cursive'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+        display: ['Inter', 'sans-serif'],
       },
       colors: {
         cpuNavy: '#0F1E3A',
