@@ -98,7 +98,7 @@ export default function AddEntryPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white/5">
       <Navbar />
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
@@ -106,8 +106,8 @@ export default function AddEntryPage() {
         className="max-w-lg mx-auto px-4 py-8"
       >
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Add Daily Entry</h1>
-          <p className="text-gray-500 font-medium mt-1">Record today's book usage</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Add Daily Entry</h1>
+          <p className="text-gray-400 font-medium mt-1">Record today's book usage</p>
         </div>
 
         {status && (
@@ -130,7 +130,7 @@ export default function AddEntryPage() {
 
           <div>
             <label className="label" htmlFor="assistantId">Your Name</label>
-            <select id="assistantId" name="assistantId" value={form.assistantId} onChange={handleChange} required className="input-field bg-white">
+            <select id="assistantId" name="assistantId" value={form.assistantId} onChange={handleChange} required className="input-field bg-white/5">
               <option value="">— Select your name —</option>
               {assistants.map((a) => (
                 <option key={a.id} value={a.id}>{a.name}</option>
@@ -138,8 +138,8 @@ export default function AddEntryPage() {
             </select>
           </div>
 
-          <div className="border-t border-gray-100 pt-6 mt-2">
-            <p className="text-xs font-bold text-cpuNavy uppercase tracking-wider mb-5">Number of books per category</p>
+          <div className="border-t border-white/10 pt-6 mt-2">
+            <p className="text-xs font-bold text-white uppercase tracking-wider mb-5">Number of books per category</p>
             <div className="grid grid-cols-1 gap-4">
               {categoryFields.map((field) => (
                 <div key={field.key} className="flex items-center gap-3">
@@ -163,10 +163,10 @@ export default function AddEntryPage() {
             </div>
           </div>
 
-          <div className="bg-blue-50/50 rounded-xl p-5 border border-blue-100">
+          <div className="bg-white/5/5 rounded-xl p-5 border border-blue-100">
             <div className="flex justify-between items-center">
-              <span className="font-bold text-cpuNavy">Total Books:</span>
-              <span className="text-2xl font-extrabold text-cpuNavy">
+              <span className="font-bold text-white">Total Books:</span>
+              <span className="text-2xl font-extrabold text-white">
                 {[form.newBooks, form.fiction, form.easy, form.reference, form.filipiniana, form.circulation]
                   .reduce((sum, v) => sum + (parseInt(v) || 0), 0).toLocaleString()}
               </span>

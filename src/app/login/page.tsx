@@ -2,13 +2,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Assistant } from '@/types';
-import { motion } from 'framer-motion';
 
 export default function LoginPage() {
   const router = useRouter();
   const [assistants, setAssistants] = useState<Assistant[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<Assistant | null>(null);
+  const [selectedId, setSelectedId] = useState<string>('');
   const [showAdd, setShowAdd] = useState(false);
   const [newName, setNewName] = useState('');
   const [addStatus, setAddStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -26,8 +25,9 @@ export default function LoginPage() {
   }, []);
 
   function handleLogin() {
-    if (!selected) return;
-    sessionStorage.setItem('assistant', JSON.stringify(selected));
+    const prof = assistants.find(a => a.id.toString() === selectedId);
+    if (!prof) return;
+    sessionStorage.setItem('assistant', JSON.stringify(prof));
     router.push('/dashboard');
   }
 
@@ -58,99 +58,98 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex text-cpuNavy bg-white overflow-hidden">
+    <main className="min-h-screen flex text-white bg-cpuNavy overflow-hidden">
       {/* Left panel (Form + Header) */}
-      <div className="w-full lg:w-1/2 flex flex-col p-8 lg:p-12 xl:p-16 border-r border-gray-200 shadow-xl z-10 relative overflow-y-auto min-h-screen justify-center">
+      <div className="w-full lg:w-1/2 flex flex-col p-8 lg:p-12 xl:p-16 shadow-2xl z-10 relative overflow-y-auto min-h-screen justify-center">
         
         {/* Header Block */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div 
           className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-6 mb-16 text-center w-full max-w-lg mx-auto"
         >
-          <img src="/elem-logo.png" alt="Elementary Logo" className="w-24 h-24 object-contain shadow-sm rounded-full p-1 border border-gray-100" />
+          <img src="/elem-logo.jpg" alt="Elementary Logo" className="w-24 h-24 object-contain shadow-sm rounded-full p-2 bg-white/5 border border-white/10" />
           <div className="flex-1">
-            <h2 className="text-xl lg:text-2xl font-black tracking-widest uppercase text-cpuNavy leading-tight">Central Philippine<br/>University</h2>
-            <h3 className="text-lg font-bold text-cpuGoldDark mt-2 uppercase tracking-wide">Elementary School</h3>
-            <p className="text-sm font-semibold text-gray-400 mt-1 uppercase tracking-wider text-[10px]">Jaro City, Iloilo, Philippines</p>
+            <h2 className="text-2xl lg:text-4xl font-black tracking-widest uppercase text-white leading-tight drop-shadow-sm">Central Philippine<br/>University</h2>
+            
+            {/* White Gap Separator */}
+            <div className="w-16 h-[3px] bg-white/70 mx-auto my-5 rounded-full shadow-sm"></div>
+            
+            <h3 className="text-xl lg:text-2xl font-bold text-cpuGold uppercase tracking-widest drop-shadow-sm">Elementary School</h3>
+            <p className="text-xs lg:text-sm font-bold text-gray-400 mt-2 uppercase tracking-[0.2em]">Jaro City, Iloilo, Philippines</p>
           </div>
-          <img src="/cpu-logo.png" alt="CPU Logo" className="w-24 h-24 object-contain shadow-sm rounded-full p-1 border border-gray-100" />
-        </motion.div>
+          <img src="/cpu-logo.png" alt="CPU Logo" className="w-24 h-24 object-contain shadow-sm rounded-full p-2 bg-white/5 border border-white/10" />
+        </div>
 
         {/* Login Form */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="card w-full max-w-lg mx-auto border-t-4 border-cpuGold shadow-lg"
+        <div 
+          className="w-full max-w-lg mx-auto bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-sm"
         >
           {!showAdd ? (
             <>
-              <h2 className="text-3xl font-extrabold text-cpuNavy mb-2">Welcome Back</h2>
-              <p className="text-gray-500 mb-8 font-semibold">Select your profile to continue tracking book usage.</p>
+              <h2 className="text-3xl font-extrabold text-white mb-2">Welcome</h2>
+              <p className="text-gray-400 mb-8 font-medium">Select your profile from the dropdown to continue tracking book usage.</p>
 
               {loading ? (
-                <div className="text-center py-10 text-cpuGold font-bold animate-pulse">Loading profiles...</div>
+                <div className="text-center py-6 text-cpuGold font-bold animate-pulse">Loading profiles...</div>
               ) : (
-                <div className="grid grid-cols-1 gap-3 mb-8 max-h-72 overflow-y-auto pr-2 custom-scrollbar">
-                  {assistants.length === 0 && (
-                    <p className="text-center text-gray-400 font-semibold py-4">No profiles found. Create one below.</p>
-                  )}
-                  {assistants.map((a) => (
-                    <button
-                      key={a.id}
-                      onClick={() => setSelected(a)}
-                      className={`flex items-center gap-4 p-4 rounded-xl border-2 font-bold text-left transition-all duration-200
-                        ${selected?.id === a.id
-                          ? 'border-cpuGold bg-blue-50 text-cpuNavy shadow scale-[1.02]'
-                          : 'border-gray-100 bg-white text-gray-700 hover:border-blue-200 hover:bg-gray-50'
-                        }`}
-                    >
-                      <div className={`w-10 h-10 flex items-center justify-center rounded-full text-white text-sm tracking-wider shadow-sm transition-colors ${selected?.id === a.id ? 'bg-cpuGold' : 'bg-cpuNavy'}`}>
-                        {a.name.substring(0, 2).toUpperCase()}
+                <div className="mb-6">
+                  {assistants.length === 0 ? (
+                    <p className="text-center text-gray-400 font-medium py-4">No profiles found. Create one below.</p>
+                  ) : (
+                    <div className="relative">
+                      <select
+                        className="w-full bg-cpuNavy border border-white/20 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-cpuGold focus:border-cpuGold focus:outline-none appearance-none cursor-pointer text-lg font-bold transition-all shadow-inner"
+                        value={selectedId}
+                        onChange={(e) => setSelectedId(e.target.value)}
+                      >
+                        <option value="" disabled className="text-gray-400 font-medium">Choose an assistant profile...</option>
+                        {assistants.map((a) => (
+                          <option key={a.id} value={a.id} className="text-white font-bold">{a.name}</option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-5 text-cpuGold">
+                        <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                       </div>
-                      <span className="text-lg">{a.name}</span>
-                    </button>
-                  ))}
+                    </div>
+                  )}
                 </div>
               )}
 
               <button
                 onClick={handleLogin}
-                disabled={!selected}
-                className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed text-lg mb-4 py-4 uppercase tracking-widest font-black"
+                disabled={!selectedId}
+                className="w-full bg-cpuGold hover:bg-yellow-400 text-cpuNavy disabled:opacity-40 disabled:cursor-not-allowed text-lg mb-4 py-4 rounded-xl uppercase tracking-widest font-black transition-colors"
               >
-                {selected ? `Continue as ${selected.name}` : 'Select Profile'}
+                {selectedId ? 'Continue Login' : 'Select Profile'}
               </button>
 
               <button
                 onClick={() => setShowAdd(true)}
-                className="btn-secondary w-full text-sm hover:border-cpuGold"
+                className="w-full bg-transparent border border-white/20 hover:bg-white/10 text-white text-sm py-4 rounded-xl font-bold transition-colors uppercase tracking-widest"
               >
                 Create New Profile
               </button>
             </>
           ) : (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
-              <h2 className="text-3xl font-extrabold text-cpuNavy mb-2">Create Profile</h2>
-              <p className="text-gray-500 mb-8 font-semibold">Log in a new student assistant to the system.</p>
+            <div>
+              <h2 className="text-3xl font-extrabold text-white mb-2">Create Profile</h2>
+              <p className="text-gray-400 mb-8 font-medium">Log in a new student assistant to the system.</p>
 
               {addStatus && (
-                <div className={`mb-6 p-4 rounded-xl text-sm font-bold border-2
-                  ${addStatus.type === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'}`}>
+                <div className={`mb-6 p-4 rounded-xl text-sm font-bold border
+                  ${addStatus.type === 'success' ? 'bg-green-500/20 text-green-200 border-green-500/50' : 'bg-red-500/20 text-red-200 border-red-500/50'}`}>
                   {addStatus.message}
                 </div>
               )}
 
-              <div className="mb-6">
-                <label className="label mb-2">Full Name</label>
+              <div className="mb-8">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Maria Santos"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleAddProfile()}
-                  className="input-field py-4"
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-cpuGold focus:ring-1 focus:ring-cpuGold transition-all font-medium text-lg"
                   autoFocus
                 />
               </div>
@@ -158,39 +157,36 @@ export default function LoginPage() {
               <button
                 onClick={handleAddProfile}
                 disabled={adding || !newName.trim()}
-                className="btn-primary w-full mb-4 disabled:opacity-50 py-4 uppercase tracking-widest font-black"
+                className="w-full bg-cpuGold hover:bg-yellow-400 text-cpuNavy disabled:opacity-50 py-4 rounded-xl uppercase tracking-widest font-black transition-colors mb-4"
               >
                 {adding ? 'Creating...' : 'Save Profile'}
               </button>
 
-              <button onClick={() => { setShowAdd(false); setAddStatus(null); setNewName(''); }} className="btn-secondary w-full border-transparent hover:border-gray-300">
+              <button onClick={() => { setShowAdd(false); setAddStatus(null); setNewName(''); }} className="w-full bg-transparent border border-white/20 hover:bg-white/10 text-white text-sm py-4 rounded-xl font-bold transition-colors uppercase tracking-widest">
                 Cancel
               </button>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
+        </div>
         
-        <p className="mt-12 text-center text-gray-400 text-xs font-bold uppercase tracking-widest">School Library • Usage Tracker Engine</p>
+        <p className="mt-12 text-center text-gray-500 text-xs font-bold uppercase tracking-widest">School Library • Usage Tracker Engine</p>
       </div>
 
       {/* Right panel (Slideshow placeholder) */}
-      <div className="hidden lg:flex w-1/2 bg-blue-50/50 flex-col items-center justify-center relative border-l border-white shadow-[inset_10px_0_20px_rgba(0,0,0,0.02)]">
-         {/* Decorative Background Element */}
-         <div className="absolute inset-0 bg-cpuNavy opacity-5 mix-blend-multiply pointer-events-none layout-bg-pattern"></div>
+      <div 
+        className="hidden lg:flex w-1/2 flex-col items-center justify-center relative shadow-[inset_10px_0_20px_rgba(0,0,0,0.02)] bg-cover bg-center"
+        style={{ backgroundImage: "url('/elem-lib.jpg')" }}
+      >
+         {/* Deep Overlay for Contrast */}
+         <div className="absolute inset-0 bg-cpuNavy/80 backdrop-blur-[2px] pointer-events-none"></div>
          
          {/* Slideshow Content Box */}
-         <motion.div 
-           initial={{ opacity: 0, scale: 0.9 }}
-           animate={{ opacity: 1, scale: 1 }}
-           transition={{ delay: 0.4 }}
-           className="text-center p-12 bg-white/70 backdrop-blur-md rounded-3xl border border-white shadow-xl max-w-md mx-auto z-10"
+         <div 
+           className="text-center p-12 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 shadow-2xl max-w-md mx-auto z-10"
          >
-           <div className="w-24 h-24 mx-auto bg-blue-100 text-blue-500 rounded-full flex items-center justify-center mb-6 shadow-inner">
-             <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-           </div>
-           <h3 className="text-2xl font-extrabold text-cpuNavy mb-2">Student Assistant Gallery</h3>
-           <p className="text-gray-500 font-medium">Replace this section with a slideshow showcasing the dedicated student assistants in action.</p>
-         </motion.div>
+           <h3 className="text-3xl font-bold text-white mb-3 tracking-tight">Elementary Library</h3>
+           <p className="text-gray-200 font-medium text-lg leading-relaxed">Welcome to the Central Philippine University Elementary School Assistant Portal.</p>
+         </div>
       </div>
     </main>
   );

@@ -22,7 +22,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-cpuNavy text-white sticky top-0 z-50 border-b border-gray-800 shadow-sm">
+    <nav className="bg-cpuNavy text-white sticky top-0 z-50 border-b border-gray-800 shadow-xl drop-shadow-sm">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2 font-extrabold text-xl hover:text-cpuGold transition-colors">
@@ -46,7 +46,7 @@ export default function Navbar() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleLogout}
-            className="bg-cpuGold hover:bg-cpuGoldDark text-cpuNavy text-sm font-medium py-2 px-5 rounded-md transition-colors"
+            className="bg-cpuGold hover:bg-cpuGoldDark text-white text-sm font-medium py-2 px-5 rounded-md transition-colors"
           >
             Logout
           </motion.button>
@@ -62,8 +62,8 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
       href={href}
       className={`text-sm font-medium py-2 px-4 rounded-md transition-all relative
         ${active
-          ? 'text-cpuGold bg-white/5'
-          : 'text-gray-300 hover:text-white hover:bg-white/5'
+          ? 'text-cpuGold bg-white/5/5'
+          : 'text-gray-300 hover:text-white hover:bg-white/5/5'
         }`}
     >
       {label}

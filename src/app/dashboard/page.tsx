@@ -142,7 +142,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-blue-50">
+    <div className="min-h-screen bg-cpuNavy">
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 py-8">
         <motion.div 
@@ -152,7 +152,7 @@ export default function DashboardPage() {
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8"
         >
           <div>
-            <h1 className="text-3xl font-semibold text-gray-500 text-xs tracking-wider uppercase">Dashboard</h1>
+            <h1 className="text-3xl font-semibold text-gray-400 text-xs tracking-wider uppercase">Dashboard</h1>
             <p className="text-cpuGoldDark font-semibold mt-1">Book usage statistics overview</p>
           </div>
           <div className="flex gap-2">
@@ -201,7 +201,7 @@ export default function DashboardPage() {
           {(['monthly', 'daily'] as const).map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`py-2 px-5 rounded-lg text-sm transition-all
-                ${activeTab === tab ? 'bg-cpuNavy text-white shadow' : 'bg-white text-gray-600 border border-transparent hover:text-cpuNavy font-medium opacity-80 hover:opacity-100'}`}>
+                ${activeTab === tab ? 'bg-cpuNavy text-white shadow' : 'bg-white/5 text-gray-300 border border-transparent hover:text-white font-medium opacity-80 hover:opacity-100'}`}>
               {tab === 'monthly' ? 'Monthly Totals' : 'Daily Entries'}
             </button>
           ))}
@@ -228,8 +228,8 @@ export default function DashboardPage() {
       {/* Edit Modal */}
       {editEntry && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-            <h2 className="text-xl font-semibold text-gray-500 text-xs tracking-wider uppercase mb-1">Edit Entry</h2>
+          <div className="bg-white/5 rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <h2 className="text-xl font-semibold text-gray-400 text-xs tracking-wider uppercase mb-1">Edit Entry</h2>
             <p className="text-cpuGoldDark text-sm font-semibold mb-4">{formatDate(editEntry.date)}</p>
 
             {editStatus && (
@@ -243,7 +243,7 @@ export default function DashboardPage() {
               <label className="label">Assistant</label>
               <select value={editEntry.assistantId}
                 onChange={(e) => setEditEntry({ ...editEntry, assistantId: e.target.value })}
-                className="input-field bg-white">
+                className="input-field bg-white/5">
                 {assistants.map((a) => (
                   <option key={a.id} value={a.id}>{a.name}</option>
                 ))}
@@ -287,11 +287,11 @@ export default function DashboardPage() {
 function MonthlyTable({ totals }: { totals: MonthlyTotal[] }) {
   if (totals.length === 0) return <EmptyState message="No monthly data yet." />;
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto p-1">
-      <h2 className="text-lg font-bold text-gray-900 mb-2 px-4 pt-4">Monthly Book Totals</h2>
+    <div className="bg-white/5 rounded-xl shadow-xl drop-shadow-sm border border-white/20 overflow-x-auto p-1">
+      <h2 className="text-lg font-bold text-white mb-2 px-4 pt-4">Monthly Book Totals</h2>
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b-2 border-gray-100 bg-gray-50/50">
+          <tr className="border-b-2 border-white/10 bg-white/5/50">
             <Th>Month</Th>
             <Th>Easy</Th>
             <Th>Fiction</Th>
@@ -304,15 +304,15 @@ function MonthlyTable({ totals }: { totals: MonthlyTotal[] }) {
         </thead>
         <tbody>
           {totals.map((row, i) => (
-            <tr key={row.month} className="border-b border-gray-50 hover:bg-blue-50/50 transition-colors">
-              <td className="py-4 px-4 font-medium text-gray-900">{row.monthLabel}</td>
+            <tr key={row.month} className="border-b border-gray-50 hover:bg-white/5/5 transition-colors">
+              <td className="py-4 px-4 font-medium text-white">{row.monthLabel}</td>
               <Num>{row.easy}</Num>
               <Num>{row.fiction}</Num>
               <Num>{row.newBooks}</Num>
               <Num>{row.reference}</Num>
               <Num>{row.filipiniana}</Num>
               <Num>{row.circulation}</Num>
-              <td className="py-4 px-4 text-center font-semibold text-cpuNavy">{row.totalBooks}</td>
+              <td className="py-4 px-4 text-center font-semibold text-white">{row.totalBooks}</td>
             </tr>
           ))}
         </tbody>
@@ -324,11 +324,11 @@ function MonthlyTable({ totals }: { totals: MonthlyTotal[] }) {
 function DailyTable({ stats, onEdit }: { stats: DailyStat[]; onEdit: (row: DailyStat) => void }) {
   if (stats.length === 0) return <EmptyState message="No daily entries yet." />;
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto p-1">
-      <h2 className="text-lg font-bold text-gray-900 mb-2 px-4 pt-4">Daily Entries</h2>
+    <div className="bg-white/5 rounded-xl shadow-xl drop-shadow-sm border border-white/20 overflow-x-auto p-1">
+      <h2 className="text-lg font-bold text-white mb-2 px-4 pt-4">Daily Entries</h2>
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b-2 border-gray-100 bg-gray-50/50">
+          <tr className="border-b-2 border-white/10 bg-white/5/50">
             <Th>Date</Th>
             <Th>Assistant</Th>
             <Th>Easy</Th>
@@ -345,19 +345,19 @@ function DailyTable({ stats, onEdit }: { stats: DailyStat[]; onEdit: (row: Daily
           {stats.map((row, i) => {
             const total = row.easy + row.fiction + row.newBooks + row.reference + row.filipiniana + row.circulation;
             return (
-              <tr key={row.id} className="border-b border-gray-50 hover:bg-blue-50/50 transition-colors">
-                <td className="py-4 px-4 font-medium text-gray-900 whitespace-nowrap">{formatDate(row.date)}</td>
-                <td className="py-4 px-4 text-gray-600 font-medium whitespace-nowrap">{row.assistant.name}</td>
+              <tr key={row.id} className="border-b border-gray-50 hover:bg-white/5/5 transition-colors">
+                <td className="py-4 px-4 font-medium text-white whitespace-nowrap">{formatDate(row.date)}</td>
+                <td className="py-4 px-4 text-gray-300 font-medium whitespace-nowrap">{row.assistant.name}</td>
                 <Num>{row.easy}</Num>
                 <Num>{row.fiction}</Num>
                 <Num>{row.newBooks}</Num>
                 <Num>{row.reference}</Num>
                 <Num>{row.filipiniana}</Num>
                 <Num>{row.circulation}</Num>
-                <td className="py-4 px-4 text-center font-semibold text-cpuNavy">{total}</td>
+                <td className="py-4 px-4 text-center font-semibold text-white">{total}</td>
                 <td className="py-4 px-4 text-center">
                   <button onClick={() => onEdit(row)}
-                    className="bg-white hover:bg-gray-50 text-gray-600 border border-gray-200 font-medium text-xs py-2 px-4 rounded-md transition-colors">
+                    className="bg-white/5 hover:bg-white/10 text-gray-300 border border-white/20 font-medium text-xs py-2 px-4 rounded-md transition-colors">
                     Edit
                   </button>
                 </td>
@@ -371,16 +371,16 @@ function DailyTable({ stats, onEdit }: { stats: DailyStat[]; onEdit: (row: Daily
 }
 
 function Th({ children }: { children: React.ReactNode }) {
-  return <th className="py-3 px-4 text-left font-semibold text-gray-500 text-xs tracking-wider uppercase whitespace-nowrap">{children}</th>;
+  return <th className="py-3 px-4 text-left font-semibold text-gray-400 text-xs tracking-wider uppercase whitespace-nowrap">{children}</th>;
 }
 function Num({ children }: { children: React.ReactNode }) {
-  return <td className="py-4 px-4 text-center text-gray-600 font-medium">{children}</td>;
+  return <td className="py-4 px-4 text-center text-gray-300 font-medium">{children}</td>;
 }
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center py-16">
+    <div className="bg-white/5 rounded-xl shadow-xl drop-shadow-sm border border-white/20 p-6 text-center py-16">
       <div className="text-5xl mb-4"></div>
-      <p className="text-gray-500 font-medium text-lg">{message}</p>
+      <p className="text-gray-400 font-medium text-lg">{message}</p>
     </div>
   );
 }
