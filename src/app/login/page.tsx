@@ -12,6 +12,10 @@ export default function LoginPage() {
   const [newName, setNewName] = useState('');
   const [addStatus, setAddStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [adding, setAdding] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginStatus, setLoginStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [removing, setRemoving] = useState(false);
 
   async function fetchAssistants() {
     const res = await fetch('/api/assistants');
@@ -24,11 +28,62 @@ export default function LoginPage() {
     fetchAssistants();
   }, []);
 
-  function handleLogin() {
-    const prof = assistants.find(a => a.id.toString() === selectedId);
-    if (!prof) return;
-    sessionStorage.setItem('assistant', JSON.stringify(prof));
-    router.push('/dashboard');
+  async function handleLogin() {
+    if (!selectedId || !password) {
+      setLoginStatus({ type: 'error', message: 'Profile and password are required.' });
+      return;
+    }
+    setLoginStatus(null);
+    try {
+      const res = await fetch(`/api/assistants/${selectedId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setLoginStatus({ type: 'error', message: data.error || 'Authentication failed.' });
+      } else {
+        const prof = assistants.find(a => a.id.toString() === selectedId);
+        if (prof) {
+          sessionStorage.setItem('assistant', JSON.stringify(prof));
+          router.push('/dashboard');
+        }
+      }
+    } catch {
+      setLoginStatus({ type: 'error', message: 'Network error.' });
+    }
+  }
+
+  async function handleRemoveProfile() {
+    if (!selectedId || !password) {
+      setLoginStatus({ type: 'error', message: 'Password is required to remove profile.' });
+      return;
+    }
+    if (!confirm('Are you sure you want to completely remove this profile? All logs will be deleted.')) return;
+    
+    setRemoving(true);
+    setLoginStatus(null);
+    try {
+      const res = await fetch(`/api/assistants/${selectedId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setLoginStatus({ type: 'error', message: data.error || 'Failed to remove profile.' });
+      } else {
+        setLoginStatus({ type: 'success', message: 'Profile removed successfully.' });
+        setSelectedId('');
+        setPassword('');
+        await fetchAssistants();
+      }
+    } catch {
+      setLoginStatus({ type: 'error', message: 'Network error.' });
+    } finally {
+      setRemoving(false);
+    }
   }
 
   async function handleAddProfile() {
@@ -39,7 +94,7 @@ export default function LoginPage() {
       const res = await fetch('/api/assistants', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName.trim() }),
+        body: JSON.stringify({ name: newName.trim(), password }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -47,6 +102,7 @@ export default function LoginPage() {
       } else {
         setAddStatus({ type: 'success', message: 'Profile created successfully.' });
         setNewName('');
+        setPassword('');
         await fetchAssistants();
         setTimeout(() => { setShowAdd(false); setAddStatus(null); }, 1000);
       }
@@ -99,7 +155,7 @@ export default function LoginPage() {
                       <select
                         className="w-full bg-cpuNavy border border-white/20 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-cpuGold focus:border-cpuGold focus:outline-none appearance-none cursor-pointer text-lg font-bold transition-all shadow-inner"
                         value={selectedId}
-                        onChange={(e) => setSelectedId(e.target.value)}
+                        onChange={(e) => { setSelectedId(e.target.value); setPassword(''); setLoginStatus(null); }}
                       >
                         <option value="" disabled className="text-gray-400 font-medium">Choose an assistant profile...</option>
                         {assistants.map((a) => (
@@ -114,20 +170,60 @@ export default function LoginPage() {
                 </div>
               )}
 
+              {selectedId && (
+                <div className="mb-6 relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-4 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-cpuGold focus:ring-1 focus:ring-cpuGold transition-all font-medium text-lg"
+                  />
+                  <button
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  >
+                    {showPassword ? (
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                    ) : (
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {loginStatus && (
+                <div className={`mb-6 p-4 rounded-xl text-sm font-bold border ${loginStatus.type === 'success' ? 'bg-green-500/20 text-green-200 border-green-500/50' : 'bg-red-500/20 text-red-200 border-red-500/50'}`}>
+                  {loginStatus.message}
+                </div>
+              )}
+
               <button
                 onClick={handleLogin}
-                disabled={!selectedId}
+                disabled={!selectedId || !password}
                 className="w-full bg-cpuGold hover:bg-yellow-400 text-cpuNavy disabled:opacity-40 disabled:cursor-not-allowed text-lg mb-4 py-4 rounded-xl uppercase tracking-widest font-black transition-colors"
               >
                 {selectedId ? 'Continue Login' : 'Select Profile'}
               </button>
 
-              <button
-                onClick={() => setShowAdd(true)}
-                className="w-full bg-transparent border border-white/20 hover:bg-white/10 text-white text-sm py-4 rounded-xl font-bold transition-colors uppercase tracking-widest"
-              >
-                Create New Profile
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setShowAdd(true); setPassword(''); setLoginStatus(null); }}
+                  className="w-full bg-transparent border border-white/20 hover:bg-white/10 text-white text-sm py-4 rounded-xl font-bold transition-colors uppercase tracking-widest"
+                >
+                  Create New Profile
+                </button>
+                {selectedId && (
+                  <button
+                    onClick={handleRemoveProfile}
+                    disabled={removing || !password}
+                    className="w-full bg-transparent border border-red-500/30 hover:bg-red-500/20 text-red-400 hover:border-red-500/50 disabled:opacity-50 text-sm py-4 rounded-xl font-bold transition-colors uppercase tracking-widest disabled:cursor-not-allowed"
+                  >
+                    {removing ? '...' : 'Remove'}
+                  </button>
+                )}
+              </div>
             </>
           ) : (
             <div>
@@ -154,15 +250,37 @@ export default function LoginPage() {
                 />
               </div>
 
+              <div className="mb-8 relative">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Set a password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddProfile()}
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-4 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-cpuGold focus:ring-1 focus:ring-cpuGold transition-all font-medium text-lg"
+                />
+                <button
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-[42px] text-gray-400 hover:text-white transition-colors"
+                >
+                  {showPassword ? (
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                  ) : (
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                  )}
+                </button>
+              </div>
+
               <button
                 onClick={handleAddProfile}
-                disabled={adding || !newName.trim()}
+                disabled={adding || !newName.trim() || !password}
                 className="w-full bg-cpuGold hover:bg-yellow-400 text-cpuNavy disabled:opacity-50 py-4 rounded-xl uppercase tracking-widest font-black transition-colors mb-4"
               >
                 {adding ? 'Creating...' : 'Save Profile'}
               </button>
 
-              <button onClick={() => { setShowAdd(false); setAddStatus(null); setNewName(''); }} className="w-full bg-transparent border border-white/20 hover:bg-white/10 text-white text-sm py-4 rounded-xl font-bold transition-colors uppercase tracking-widest">
+              <button onClick={() => { setShowAdd(false); setAddStatus(null); setNewName(''); setPassword(''); }} className="w-full bg-transparent border border-white/20 hover:bg-white/10 text-white text-sm py-4 rounded-xl font-bold transition-colors uppercase tracking-widest">
                 Cancel
               </button>
             </div>

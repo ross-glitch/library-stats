@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { formatMonthLabel } from '@/lib/utils';
 import { MonthlyTotal } from '@/types';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const allStats = await prisma.dailyStat.findMany({

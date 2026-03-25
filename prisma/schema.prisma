@@ -10,6 +10,7 @@ datasource db {
 model Assistant {
   id         Int         @id @default(autoincrement())
   name       String      @unique
+  password   String
   createdAt  DateTime    @default(now())
   dailyStats DailyStat[]
 }

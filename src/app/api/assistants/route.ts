@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const assistants = await prisma.assistant.findMany({
       orderBy: { name: 'asc' },
     });
     const serialized = assistants.map((a) => ({
-      ...a,
+      id: a.id,
+      name: a.name,
       createdAt: a.createdAt.toISOString(),
+      // Omitting password from GET
     }));
     return NextResponse.json({ data: serialized });
   } catch (error) {
@@ -20,10 +24,14 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name } = body;
+    const { name, password } = body;
 
     if (!name || name.trim() === '') {
       return NextResponse.json({ error: 'Name is required.' }, { status: 400 });
+    }
+
+    if (!password || password.trim() === '') {
+      return NextResponse.json({ error: 'Password is required.' }, { status: 400 });
     }
 
     const trimmed = name.trim();
@@ -34,11 +42,11 @@ export async function POST(req: NextRequest) {
     }
 
     const assistant = await prisma.assistant.create({
-      data: { name: trimmed },
+      data: { name: trimmed, password: password.trim() },
     });
 
     return NextResponse.json({
-      data: { ...assistant, createdAt: assistant.createdAt.toISOString() },
+      data: { id: assistant.id, name: assistant.name, createdAt: assistant.createdAt.toISOString() },
       message: 'Profile created!',
     }, { status: 201 });
   } catch (error) {
