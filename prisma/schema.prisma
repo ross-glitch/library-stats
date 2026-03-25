@@ -11,6 +11,7 @@ model Assistant {
   id         Int         @id @default(autoincrement())
   name       String      @unique
   password   String
+  isDeleted  Boolean     @default(false)
   createdAt  DateTime    @default(now())
   dailyStats DailyStat[]
 }

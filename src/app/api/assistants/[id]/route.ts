@@ -56,11 +56,11 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       return NextResponse.json({ error: 'Incorrect password.' }, { status: 401 });
     }
 
-    // Delete associated stats first or let Prisma cascade if configured.
-    // In schema, the relation is not cascaded. We must delete stats first.
-    await prisma.dailyStat.deleteMany({ where: { assistantId: id } });
-    
-    await prisma.assistant.delete({ where: { id } });
+    // Soft delete: Update isDeleted to true so the data remains linked in the database
+    await prisma.assistant.update({ 
+      where: { id },
+      data: { isDeleted: true }
+    });
 
     return NextResponse.json({ message: 'Profile deleted successfully' }, { status: 200 });
   } catch (error) {

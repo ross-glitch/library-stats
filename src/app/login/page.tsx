@@ -60,7 +60,7 @@ export default function LoginPage() {
       setLoginStatus({ type: 'error', message: 'Password is required to remove profile.' });
       return;
     }
-    if (!confirm('Are you sure you want to completely remove this profile? All logs will be deleted.')) return;
+    if (!confirm('Are you sure you want to remove this profile from the login screen?\n\n(Don\'t worry, any books previously encoded by this person will stay safe in the server!)')) return;
     
     setRemoving(true);
     setLoginStatus(null);
@@ -151,20 +151,29 @@ export default function LoginPage() {
                   {assistants.length === 0 ? (
                     <p className="text-center text-gray-400 font-medium py-4">No profiles found. Create one below.</p>
                   ) : (
-                    <div className="relative">
-                      <select
-                        className="w-full bg-cpuNavy border border-white/20 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-cpuGold focus:border-cpuGold focus:outline-none appearance-none cursor-pointer text-lg font-bold transition-all shadow-inner"
-                        value={selectedId}
-                        onChange={(e) => { setSelectedId(e.target.value); setPassword(''); setLoginStatus(null); }}
-                      >
-                        <option value="" disabled className="text-gray-400 font-medium">Choose an assistant profile...</option>
-                        {assistants.map((a) => (
-                          <option key={a.id} value={a.id} className="text-white font-bold">{a.name}</option>
-                        ))}
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-5 text-cpuGold">
-                        <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    <div className="relative group menu w-full">
+                      {/* The visible "button" mimicking a select */}
+                      <div className="w-full bg-cpuNavy border border-white/20 text-white rounded-xl px-5 py-4 cursor-pointer text-lg font-bold transition-all shadow-inner group-hover:border-cpuGold flex justify-between items-center">
+                        <span className={selectedId ? 'text-white' : 'text-gray-400'}>
+                          {selectedId ? assistants.find(a => String(a.id) === selectedId)?.name : 'Choose an assistant profile...'}
+                        </span>
+                        <div className="text-cpuGold transition-transform duration-300 group-hover:rotate-180">
+                          <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
                       </div>
+
+                      {/* The animated animated dropdown menu */}
+                      <ul className="absolute left-0 top-[100%] w-full bg-cpuNavy border border-transparent max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out group-hover:max-h-[300px] group-hover:opacity-100 group-hover:border-white/20 group-hover:border-t-0 z-50 rounded-b-xl shadow-2xl overflow-y-auto custom-scrollbar">
+                        {assistants.map((a) => (
+                          <li 
+                            key={a.id} 
+                            onClick={() => { setSelectedId(String(a.id)); setPassword(''); setLoginStatus(null); }}
+                            className="text-white font-bold px-5 py-4 hover:bg-cpuGold hover:text-cpuNavy cursor-pointer transition-colors"
+                          >
+                            {a.name}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>

@@ -122,21 +122,29 @@ export default function AddEntryPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-300 mb-2 tracking-wide uppercase">Assistant</label>
-                  <div className="relative">
-                    <select
-                      required
-                      value={assistantId}
-                      onChange={(e) => setAssistantId(e.target.value)}
-                      className={`${inputBaseClass} appearance-none cursor-pointer`}
-                    >
-                      <option value="" disabled className="text-gray-900">Select Assistant...</option>
-                      {assistants.map(a => (
-                        <option key={a.id} value={a.id} className="text-gray-900">{a.name}</option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-cpuGold">
-                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                  <div className="relative group w-full">
+                    {/* The visible "button" mimicking a select */}
+                    <div className={`${inputBaseClass} cursor-pointer flex justify-between items-center group-hover:border-cpuGold group-hover:ring-2 group-hover:ring-cpuGold/50`}>
+                      <span className={assistantId ? 'text-white' : 'text-gray-500'}>
+                        {assistantId ? assistants.find(a => String(a.id) === assistantId)?.name : 'Select Assistant...'}
+                      </span>
+                      <div className="text-cpuGold transition-transform duration-300 group-hover:rotate-180">
+                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                      </div>
                     </div>
+
+                    {/* The animated hidden menu */}
+                    <ul className="absolute left-0 top-[100%] w-full bg-[#0a1128] border border-transparent max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out group-hover:max-h-[250px] group-hover:opacity-100 group-hover:border-white/20 z-50 rounded-b-xl shadow-2xl overflow-y-auto mt-1">
+                      {assistants.map((a) => (
+                        <li 
+                          key={a.id} 
+                          onClick={() => setAssistantId(String(a.id))}
+                          className="text-white font-medium px-4 py-3 hover:bg-cpuGold hover:text-cpuNavy cursor-pointer transition-colors border-b border-white/5 last:border-0"
+                        >
+                          {a.name}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>

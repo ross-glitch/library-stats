@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const assistants = await prisma.assistant.findMany({
+      where: { isDeleted: false },
       orderBy: { name: 'asc' },
     });
     const serialized = assistants.map((a) => ({
