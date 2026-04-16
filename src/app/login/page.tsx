@@ -61,7 +61,7 @@ export default function LoginPage() {
       return;
     }
     if (!confirm('Are you sure you want to remove this profile from the login screen?\n\n(Don\'t worry, any books previously encoded by this person will stay safe in the server!)')) return;
-    
+
     setRemoving(true);
     setLoginStatus(null);
     try {
@@ -117,18 +117,18 @@ export default function LoginPage() {
     <main className="min-h-screen flex text-white bg-cpuNavy overflow-hidden">
       {/* Left panel (Form + Header) */}
       <div className="w-full lg:w-1/2 flex flex-col p-8 lg:p-12 xl:p-16 shadow-2xl z-10 relative overflow-y-auto min-h-screen justify-center">
-        
+
         {/* Header Block */}
-        <div 
+        <div
           className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-6 mb-16 text-center w-full max-w-lg mx-auto"
         >
           <img src="/elem-logo.jpg" alt="Elementary Logo" className="w-24 h-24 object-contain shadow-sm rounded-full p-2 bg-white/5 border border-white/10" />
           <div className="flex-1">
-            <h2 className="text-2xl lg:text-4xl font-black tracking-widest uppercase text-white leading-tight drop-shadow-sm">Central Philippine<br/>University</h2>
-            
+            <h2 className="text-2xl lg:text-4xl font-black tracking-widest uppercase text-white leading-tight drop-shadow-sm">Central Philippine<br />University</h2>
+
             {/* White Gap Separator */}
             <div className="w-16 h-[3px] bg-white/70 mx-auto my-5 rounded-full shadow-sm"></div>
-            
+
             <h3 className="text-xl lg:text-2xl font-bold text-cpuGold uppercase tracking-widest drop-shadow-sm">Elementary School</h3>
             <p className="text-xs lg:text-sm font-bold text-gray-400 mt-2 uppercase tracking-[0.2em]">Jaro City, Iloilo, Philippines</p>
           </div>
@@ -136,7 +136,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login Form */}
-        <div 
+        <div
           className="w-full max-w-lg mx-auto bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-sm"
         >
           {!showAdd ? (
@@ -158,15 +158,15 @@ export default function LoginPage() {
                           {selectedId ? assistants.find(a => String(a.id) === selectedId)?.name : 'Choose an assistant profile...'}
                         </span>
                         <div className="text-cpuGold transition-transform duration-300 group-hover:rotate-180">
-                          <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                          <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                         </div>
                       </div>
 
                       {/* The animated animated dropdown menu */}
                       <ul className="absolute left-0 top-[100%] w-full bg-cpuNavy border border-transparent max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out group-hover:max-h-[300px] group-hover:opacity-100 group-hover:border-white/20 group-hover:border-t-0 z-50 rounded-b-xl shadow-2xl overflow-y-auto custom-scrollbar">
                         {assistants.map((a) => (
-                          <li 
-                            key={a.id} 
+                          <li
+                            key={a.id}
                             onClick={() => { setSelectedId(String(a.id)); setPassword(''); setLoginStatus(null); }}
                             className="text-white font-bold px-5 py-4 hover:bg-cpuGold hover:text-cpuNavy cursor-pointer transition-colors"
                           >
@@ -250,7 +250,7 @@ export default function LoginPage() {
                 <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
                 <input
                   type="text"
-                  placeholder="e.g. Maria Santos"
+                  placeholder="SORRY NA MY LOVE SANA TANGGAPIN MO PA AKO SI GEMINI KASI NAG COCODE SAKIN KAYA GANYAN YUNG EXAMPLES NIYA SORRY NA MY LOVEY CAKES KO"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleAddProfile()}
@@ -295,25 +295,25 @@ export default function LoginPage() {
             </div>
           )}
         </div>
-        
+
         <p className="mt-12 text-center text-gray-500 text-xs font-bold uppercase tracking-widest">School Library • Usage Tracker Engine</p>
       </div>
 
       {/* Right panel (Slideshow placeholder) */}
-      <div 
+      <div
         className="hidden lg:flex w-1/2 flex-col items-center justify-center relative shadow-[inset_10px_0_20px_rgba(0,0,0,0.02)] bg-cover bg-center"
         style={{ backgroundImage: "url('/elem-lib.jpg')" }}
       >
-         {/* Deep Overlay for Contrast */}
-         <div className="absolute inset-0 bg-cpuNavy/80 backdrop-blur-[2px] pointer-events-none"></div>
-         
-         {/* Slideshow Content Box */}
-         <div 
-           className="text-center p-12 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 shadow-2xl max-w-md mx-auto z-10"
-         >
-           <h3 className="text-3xl font-bold text-white mb-3 tracking-tight">Elementary Library</h3>
-           <p className="text-gray-200 font-medium text-lg leading-relaxed">Welcome to the Central Philippine University Elementary School Assistant Portal.</p>
-         </div>
+        {/* Deep Overlay for Contrast */}
+        <div className="absolute inset-0 bg-cpuNavy/80 backdrop-blur-[2px] pointer-events-none"></div>
+
+        {/* Slideshow Content Box */}
+        <div
+          className="text-center p-12 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 shadow-2xl max-w-md mx-auto z-10"
+        >
+          <h3 className="text-3xl font-bold text-white mb-3 tracking-tight">Elementary Library</h3>
+          <p className="text-gray-200 font-medium text-lg leading-relaxed">Welcome to the Central Philippine University Elementary School Assistant Portal.</p>
+        </div>
       </div>
     </main>
   );
